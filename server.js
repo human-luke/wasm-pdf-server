@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const wasmModule = require('./PdfTeXEngine.js'); // No `()`
+
 let engine;
 
 const app = express();
@@ -9,9 +10,11 @@ app.use(express.json({ limit: '1mb' }));
 
 (async () => {
 
-  engine = new wasmModule.PdfTeXEngine();
+  const wasmInit = require('./PdfTeXEngine.js');
+  const module = await wasmInit();  // <- this is the fix
+  engine = new module.PdfTeXEngine();
   await engine.loadEngine();
-  console.log("LaTeX engine loaded");
+  console.log("LaTeX engine loaded ✅");
 })();
 
 app.post('/compile', async (req, res) => {
