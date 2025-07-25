@@ -1,4 +1,4 @@
-PROJECT_NAME	:=	swiftlatexpdftex.js
+PROJECT_NAME	:=	pdftex
 
 CC          	= 	emcc
 CXX          	= 	em++

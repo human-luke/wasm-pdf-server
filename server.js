@@ -11,8 +11,16 @@ app.use(express.json({ limit: '1mb' }));
 (async () => {
 
   const wasmInit = require('./PdfTeXEngine.js');
-  const module = await wasmInit();  // <- this is the fix
-  engine = new module.PdfTeXEngine();
+  global.fetch = (url) => {
+  const fs = require('fs');
+  const path = require('path');
+  const wasmPath = path.resolve(__dirname, 'pdftex.wasm', 'pdftex.wasm');
+  return Promise.resolve({
+    arrayBuffer: () => Promise.resolve(fs.readFileSync(wasmPath).buffer)
+  });
+};
+  // const module = await wasmInit();  // <- this is the fix
+  engine = new wasmModule.PdfTeXEngine();
   await engine.loadEngine();
   console.log("LaTeX engine loaded ✅");
 })();
