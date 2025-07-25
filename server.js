@@ -2,14 +2,10 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const wasmModule = require('./PdfTeXEngine.js'); // No `()`
-
-engine = new wasmModule.PdfTeXEngine();
-await engine.loadEngine();
+let engine;
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
-
-let engine;
 
 (async () => {
 
