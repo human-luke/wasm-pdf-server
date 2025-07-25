@@ -1,15 +1,15 @@
 const express = require('express');
 const fs = require('fs');
-const { instantiate } = require('node:module').wasm;
 
 const app = express();
 app.use(express.json({ limit: '1mb' }));
 
 (async () => {
   try {
-    const wasmBuffer = fs.readFileSync('./PdfTeXEngine.wasm');
-    const wasmModule = await instantiate(wasmBuffer, {});
-    const engine = new wasmModule.exports.PdfTeXEngine(); // Adjust export name
+    // Correct WASM instantiation
+    const wasmBuffer = fs.readFileSync('./PdfTeXEngine.wasm'); // Adjust path to .wasm file
+    const wasmModule = await WebAssembly.instantiate(wasmBuffer);
+    const engine = new wasmModule.instance.exports.PdfTeXEngine(); // Adjust export name
     await engine.loadEngine();
     console.log('LaTeX engine loaded');
 
