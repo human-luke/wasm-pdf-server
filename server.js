@@ -17,10 +17,11 @@ global.fetch = (url) => {
   });
 };
 
+const createModule = require('./PdfTeXEngine.js'); // No () here
+
 (async () => {
-  const wasmInit = require('./PdfTeXEngine.js');
-  const wasmModule = await wasmInit();
-  engine = wasmModule;
+  const module = await createModule();  // ✅ THIS is the function!
+  engine = new module.PdfTeXEngine();
   await engine.loadEngine();
   console.log("✅ LaTeX engine loaded");
 })();
