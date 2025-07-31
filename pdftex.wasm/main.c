@@ -13,9 +13,16 @@
 #include <md5.h>
 #include <setjmp.h>
 #include "bibtex.h"
+#include <stdio.h>
+#include <emscripten.h>
 string fullnameoffile;
 string output_directory;
 
+EMSCRIPTEN_KEEPALIVE
+int compileLaTeX() {
+    printf("compileLaTeX called!\n");
+    return 0;  // success
+}
 int ac;
 char **av;
 int tfmtemp;

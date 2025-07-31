@@ -1,12 +1,22 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const wasmModule = require('./PdfTeXEngine.js'); // No `()`
+
+const wasmModule = require('./pdftex.wasm/PdfTeXEngine.js');
+
 
 let engine;
-
 const app = express();
 app.use(express.json({ limit: '1mb' }));
+
+(async () => {
+  
+  engine = new wasmModule.PdfTeXEngine();
+  await engine.loadEngine();
+  console.log("✅ LaTeX engine loaded");
+})();
+
+
 
 global.fetch = (url) => {
   const fs = require('fs');
@@ -17,14 +27,6 @@ global.fetch = (url) => {
   });
 };
 
-const createModule = require('./PdfTeXEngine.js'); // No () here
-
-(async () => {
-  const module = await createModule();  // ✅ THIS is the function!
-  engine = new module.PdfTeXEngine();
-  await engine.loadEngine();
-  console.log("✅ LaTeX engine loaded");
-})();
 
 app.post('/compile', async (req, res) => {
   try {
@@ -44,10 +46,17 @@ app.post('/compile', async (req, res) => {
     res.setHeader('Content-Type', 'application/pdf');
     res.send(Buffer.from(result.pdf));
   } catch (err) {
-    console.error(err);
+    console.error("Compilation error:", err);
     res.status(500).json({ error: "Compilation error", details: err.toString() });
   }
 });
+
+// Serve static files (like the WASM file)
+app.use(express.static(path.join(__dirname, 'public')));
+
+//  Example:  Put your pdftex.wasm file in a "public" directory
+//  Then you can access it via /pdftex.wasm
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`LaTeX API running on port ${port}`));

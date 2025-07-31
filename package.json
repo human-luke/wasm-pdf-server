@@ -1,5 +1,5 @@
 {
-  "name": "latex-wasm-api",
+  "name": "pdftex-wasm-server",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
